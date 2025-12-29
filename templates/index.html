@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Compiler Dashboard</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            margin: 0; 
+            padding: 20px;
+            background-color: #87CEEB; 
+            color: #333; 
+        }
+
+        h1, .subtitle {
+            text-align: center;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #333; 
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            margin-top: 20px;
+        }
+
+        h2 { color: #007ACC; margin-top: 0; }
+
+        .subtitle { font-size: 1.1em; margin-bottom: 20px; }
+
+        code {
+            background-color: #FFECB3; 
+            color: #D35400; 
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .container { 
+            display: flex; 
+            max-width: 1400px; 
+            margin: 20px auto; 
+            gap: 20px; 
+        }
+        
+        .code-area, .output-area { 
+            flex: 1; 
+            padding: 25px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border: 2px solid #007ACC; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+        }
+        
+        textarea { 
+            width: 100%; 
+            height: 380px; 
+            padding: 15px; 
+            box-sizing: border-box; 
+            font-family: 'Consolas', monospace; 
+            font-size: 15px; 
+            background-color: #F0F8FF; 
+            color: #1a1a1a; 
+            border: 1px solid #007ACC;
+            border-radius: 6px;
+            resize: none; 
+            outline: none;
+        }
+
+        .output-area pre { 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+            background-color: #F0F8FF; 
+            color: #0056b3; 
+            padding: 15px;
+            border-radius: 6px;
+            height: 380px;
+            margin: 0;
+            overflow-y: auto;
+            border: 1px dashed #007ACC;
+            font-family: 'Consolas', monospace;
+        }
+
+        button { 
+            padding: 12px 35px; 
+            margin-top: 20px;
+            background-color: #FF5733; 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: bold;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #C70039; transform: scale(1.05); }
+
+        .error { 
+            color: #C70039 !important; 
+            font-weight: bold; 
+            background-color: #FFDDE2 !important; 
+            padding: 10px; 
+            border-radius: 6px; 
+            border: 1px solid #C70039; 
+            display: block; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mini Compiler Dashboard</h1>
+    <p class="subtitle">Supported Syntax: <code>A = 10 + 5;</code> OR <code>PRINT A;</code></p>
+    
+    <div class="container">
+        <div class="code-area">
+            <h2>Source Code Input</h2>
+            <textarea id="codeInput" placeholder="Example:
+A = 3;
+B = 5;
+C = A + B;
+PRINT C;"></textarea>
+            <button onclick="compileCode()">Compile Code</button>
+        </div>
+        
+        <div class="output-area">
+            <h2>Compiler Output</h2>
+            <pre id="outputDisplay">Click 'Compile Code' to see the result.</pre>
+        </div>
+    </div>
+
+    <script>
+        function compileCode() {
+            const code = document.getElementById('codeInput').value;
+            const outputDisplay = document.getElementById('outputDisplay');
+            
+            if (!code.trim()) {
+                outputDisplay.innerHTML = `<span class="error">Error: Please enter some code first!</span>`;
+                return;
+            }
+
+            outputDisplay.textContent = "Compiling...";
+
+            fetch('/compile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = data.output;
+                if (output.includes("Error")) {
+                    outputDisplay.innerHTML = `<span class="error">${output}</span>`;
+                } else {
+                    outputDisplay.textContent = output;
+                }
+            })
+            .catch(error => {
+                outputDisplay.innerHTML = `<span class="error">Communication Error: Could not reach the Python server.</span>`;
+            });
+        }
+    </script>
+</body>
+</html>

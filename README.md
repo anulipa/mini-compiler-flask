@@ -48,4 +48,24 @@ Flask Development Server
 
 http://127.0.0.1:5000
 
+---
+
+## Screenshots
+
+### Dashboard
+![Dashboard](readmeImages/Dashboard.png)
+
+### Lexical Analysis
+![Lexical](readmeImages/Lexical.png)
+
+### Syntax Analysis
+![Syntax](readmeImages/Syntax.png)
+
+### Execution Output
+![Execution](readmeImages/Execution.png)
+
+### Error Handling
+![Error](readmeImages/Error.png)
+
+
 
